@@ -9,39 +9,25 @@
 
 ### Quick Start
 
-1. Copy environment file:
+1. Start the dev environment:
     ```bash
-    cp .env.example .env
+    ./scripts/server.sh
     ```
+    This copies `.env.example` to `.env` if needed, builds/starts the
+    services, and runs migrations. The app is then available at
+    http://localhost:8000.
 
-2. Start all services:
-    ```bash
-    ./scripts/docker/start.sh
-    ```
-
-3. Run database migrations:
-    ```bash
-    ./scripts/docker/migrate.sh
-    ```
-
-4. (Optional) Load geospatial data:
+2. (Optional) Load geospatial data:
     ```bash
     ./scripts/docker/setupdb.sh -b  # Load boundary data
     ```
-
-5. Build frontend assets:
-    ```bash
-    ./scripts/docker/bundle.sh --vendor
-    ./scripts/docker/bundle.sh
-    ```
-
-6. Access the application at http://localhost:8000
 
 ### Development Commands
 
 | Command | Description |
 |---------|-------------|
-| `./scripts/docker/start.sh` | Start all services |
+| `./scripts/server.sh` | Start (or resume) the full dev environment; safe to re-run |
+| `./scripts/docker/start.sh` | Lower-level: `docker compose up -d` for every service, including `rwd` |
 | `./scripts/docker/stop.sh` | Stop all services |
 | `./scripts/docker/logs.sh [service]` | View service logs |
 | `./scripts/docker/shell.sh [service]` | Get a shell in a container |

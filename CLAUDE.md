@@ -20,7 +20,21 @@ being phased out.
 ## Common commands (Docker)
 
 ```bash
-cp .env.example .env               # first-time setup
+./scripts/server.sh                # first-time setup + start the dev environment, ready at http://localhost:8000
+```
+
+`scripts/server.sh` copies `.env.example` to `.env` if needed, builds/starts
+`postgres`, `redis`, `app`, `celery`, `tiler`, and `geop`, and runs
+migrations. It deliberately skips `rwd` (Rapid Watershed Delineation): that
+service's published image uses an old manifest format that newer
+Docker/containerd builds refuse to pull, and it's optional for most local
+work anyway. `./scripts/docker/start.sh` is the lower-level equivalent
+(`docker compose up -d` with no service list) — it includes `rwd` and will
+fail on affected setups.
+
+Other commands:
+```bash
+cp .env.example .env               # first-time setup (done automatically by server.sh)
 ./scripts/docker/start.sh          # start all services (postgres, redis, app, celery, tiler, geop, rwd)
 ./scripts/docker/migrate.sh        # run Django migrations
 ./scripts/docker/setupdb.sh -b     # load boundary data (see -h for other datasets: streams, mapshed, water quality...)
