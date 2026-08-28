@@ -5,7 +5,7 @@
 set -e
 set -x
 
-docker compose exec app bash -lc "$(cat <<'INNER_SCRIPT'
+docker compose exec -T app bash -lc "$(cat <<'INNER_SCRIPT'
 set -e
 set -x
 
@@ -45,7 +45,7 @@ load_dep=false
 should_purge_cache=false
 path_to_purge=
 
-while getopts ":hbsSdtBpmqcf:x:" opt; do
+while getopts ":hbsSdtBpmqcf:x:X" opt; do
     case $opt in
         h)
             echo -e "$usage"
@@ -95,6 +95,9 @@ psql -c "ALTER TABLE spatial_ref_sys OWNER TO ${PGUSER};"
 
 # Create pg_trgm extension for faster LIKE matches
 psql -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+
+# Run migrations
+python manage.py migrate
 
 function download_and_load {
     for f in "${FILES[@]}"; do
@@ -225,4 +228,4 @@ if [ "$load_water_quality" = "true" ] ; then
     purge_tile_cache $PATHS
 fi
 INNER_SCRIPT
-)" -- "$@"
+)" "setupdb.sh" "$@"
