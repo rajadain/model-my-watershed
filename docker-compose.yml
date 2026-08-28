@@ -1,0 +1,139 @@
+services:
+  postgres:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_DB: mmw
+      POSTGRES_USER: mmw
+      POSTGRES_PASSWORD: mmw
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mmw"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:6.0-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    environment:
+      DJANGO_SETTINGS_MODULE: mmw.settings.docker
+      DJANGO_SECRET_KEY: development-secret-key
+      DJANGO_STATIC_ROOT: /var/www/mmw/static/
+      DJANGO_MEDIA_ROOT: /var/www/mmw/media/
+      MMW_DB_HOST: postgres
+      MMW_DB_NAME: mmw
+      MMW_DB_USER: mmw
+      MMW_DB_PASSWORD: mmw
+      MMW_CACHE_HOST: redis
+      MMW_CACHE_PORT: 6379
+      MMW_TILER_HOST: localhost:4000
+      MMW_GEOPROCESSING_HOST: geop
+      MMW_GEOPROCESSING_PORT: 8090
+      RWD_HOST: rwd
+      RWD_PORT: 5000
+    volumes:
+      - ./src/mmw:/opt/app
+      - static-files:/var/www/mmw/static
+      - media-files:/var/www/mmw/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+      - "35729:35729"
+
+  celery:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    command: celery -A mmw.celery:app worker -l debug -c 2
+    environment:
+      DJANGO_SETTINGS_MODULE: mmw.settings.docker
+      DJANGO_SECRET_KEY: development-secret-key
+      DJANGO_STATIC_ROOT: /var/www/mmw/static/
+      DJANGO_MEDIA_ROOT: /var/www/mmw/media/
+      MMW_DB_HOST: postgres
+      MMW_DB_NAME: mmw
+      MMW_DB_USER: mmw
+      MMW_DB_PASSWORD: mmw
+      MMW_CACHE_HOST: redis
+      MMW_CACHE_PORT: 6379
+      MMW_TILER_HOST: localhost:4000
+      MMW_GEOPROCESSING_HOST: geop
+      MMW_GEOPROCESSING_PORT: 8090
+      RWD_HOST: rwd
+      RWD_PORT: 5000
+      CELERY_APP: mmw.celery:app
+      CELERYD_LOG_LEVEL: DEBUG
+    volumes:
+      - ./src/mmw:/opt/app
+      - media-files:/var/www/mmw/media
+    depends_on:
+      - app
+      - redis
+      - geop
+      - rwd
+
+  tiler:
+    build:
+      context: .
+      dockerfile: docker/tiler/Dockerfile
+    environment:
+      MMW_DB_HOST: postgres
+      MMW_DB_NAME: mmw
+      MMW_DB_USER: mmw
+      MMW_DB_PASSWORD: mmw
+      MMW_DB_PORT: 5432
+      MMW_CACHE_HOST: redis
+      MMW_CACHE_PORT: 6379
+    volumes:
+      - ./src/tiler:/opt/tiler
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+
+  geop:
+    build:
+      context: .
+      dockerfile: docker/geop/Dockerfile
+    environment:
+      AWS_REGION: us-east-1
+    ports:
+      - "8090:8090"
+
+  rwd:
+    image: quay.io/wikiwatershed/rwd:2.0.0
+    volumes:
+      - ${RWD_DATA:-./data/rwd}:/opt/rwd-data:ro
+    ports:
+      - "5000:5000"
+
+volumes:
+  postgres-data:
+  static-files:
+  media-files:
+
+networks:
+  default:
+    name: mmw-network

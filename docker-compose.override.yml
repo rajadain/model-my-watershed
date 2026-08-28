@@ -1,0 +1,20 @@
+services:
+  app:
+    command: gunicorn --reload --bind 0.0.0.0:8000 --workers 1 mmw.wsgi
+    ports:
+      - "8000:8000"
+
+  tiler:
+    command: npm run watch
+
+  livereload:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    command: yarn run livereload
+    volumes:
+      - ./src/mmw:/opt/app
+    ports:
+      - "35729:35729"
+    depends_on:
+      - app

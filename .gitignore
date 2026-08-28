@@ -99,3 +99,6 @@ _SUCCESS
 
 # MacOS
 .DS_Store
+
+# Environment
+.env

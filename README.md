@@ -1,5 +1,106 @@
 # model-my-watershed
 
+## Development with Docker
+
+### Prerequisites
+- Docker 20.10+
+- Docker Compose 2.0+
+- (Optional) RWD data directory for watershed delineation
+
+### Quick Start
+
+1. Copy environment file:
+    ```bash
+    cp .env.example .env
+    ```
+
+2. Start all services:
+    ```bash
+    ./scripts/docker/start.sh
+    ```
+
+3. Run database migrations:
+    ```bash
+    ./scripts/docker/migrate.sh
+    ```
+
+4. (Optional) Load geospatial data:
+    ```bash
+    ./scripts/docker/setupdb.sh -b  # Load boundary data
+    ```
+
+5. Build frontend assets:
+    ```bash
+    ./scripts/docker/bundle.sh --vendor
+    ./scripts/docker/bundle.sh
+    ```
+
+6. Access the application at http://localhost:8000
+
+### Development Commands
+
+| Command | Description |
+|---------|-------------|
+| `./scripts/docker/start.sh` | Start all services |
+| `./scripts/docker/stop.sh` | Stop all services |
+| `./scripts/docker/logs.sh [service]` | View service logs |
+| `./scripts/docker/shell.sh [service]` | Get a shell in a container |
+
+### Django Commands
+
+| Command | Description |
+|---------|-------------|
+| `./scripts/docker/manage.sh <command>` | Run Django management command |
+| `./scripts/docker/manage.sh shell` | Django shell |
+| `./scripts/docker/manage.sh runserver` | Run dev server |
+| `./scripts/docker/migrate.sh` | Run migrations |
+
+### Frontend Development
+
+| Command | Description |
+|---------|-------------|
+| `./scripts/docker/bundle.sh` | Build JS/CSS bundles |
+| `./scripts/docker/bundle.sh --watch` | Watch mode with live rebuild |
+| `./scripts/docker/bundle.sh --debug` | Build with source maps |
+| `./scripts/docker/bundle.sh --vendor` | Build vendor bundle + copy assets |
+| `./scripts/docker/yarn.sh <command>` | Run yarn commands |
+
+### Testing
+
+| Command | Description |
+|---------|-------------|
+| `./scripts/docker/test.sh` | Run full test suite (Python + JS) |
+| `./scripts/docker/check.sh` | Run flake8 linting |
+| `./scripts/docker/testem.sh` | Run JS tests interactively |
+
+### Debug Mode
+
+For interactive debugging with auto-reload:
+
+| Command | Description |
+|---------|-------------|
+| `./scripts/docker/debugserver.sh` | Django with gunicorn --reload |
+| `./scripts/docker/debugcelery.sh` | Celery with debug logging |
+| `./scripts/docker/debugtiler.sh` | Tiler with npm watch |
+
+### Feature Flags
+
+```bash
+./scripts/docker/toggle_feature.sh subbasin  # Enable subbasin modeling
+./scripts/docker/toggle_feature.sh clear     # Clear all features
+```
+
+### Differences from Vagrant
+
+| Vagrant | Docker | Notes |
+|---------|--------|-------|
+| `vagrant up` | `./scripts/docker/start.sh` | Much faster startup |
+| `vagrant ssh app` | `./scripts/docker/shell.sh app` | |
+| `vagrant halt` | `./scripts/docker/stop.sh` | |
+| `scripts/manage.sh` | `scripts/docker/manage.sh` | Same interface |
+| `scripts/bundle.sh` | `scripts/docker/bundle.sh` | Same interface |
+| `scripts/test.sh` | `scripts/docker/test.sh` | Same interface |
+
 ## Local Development
 
 A combination of Vagrant 2.2+ and Ansible 2.8 is used to setup the development environment for this project. The project consists of the following virtual machines:
