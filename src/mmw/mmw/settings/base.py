@@ -203,6 +203,12 @@ STATICFILES_DIRS = (
     STATICFILES_DIR,
 )
 
+# Use WhiteNoise's storage backend to serve pre-compressed versions of collected
+# app static files (admin, rest_framework, etc.) from STATIC_ROOT.
+# Bundled JS/CSS files written directly to STATIC_ROOT by bundle.sh are served
+# by WhiteNoise as-is (compressed in memory at startup).
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders  # NOQA
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -263,6 +269,7 @@ TEMPLATES = [
 MIDDLEWARE = (
     # Default Django middleware.
     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'mmw.middleware.BypassMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

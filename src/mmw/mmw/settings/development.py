@@ -58,6 +58,10 @@ LOGGING = {
 }
 # END LOGGING CONFIGURATION
 
+# WhiteNoise: re-scan STATIC_ROOT on every request so changes from bundle.sh
+# (or bundle.sh --watch) are served immediately without restarting gunicorn.
+WHITENOISE_AUTOREFRESH = True
+
 # API key for testing/development
 GOOGLE_MAPS_API_KEY = 'AIzaSyB0D5gjoIHpmy-xdP2cr_0I-E7K6s_L0k4'
 
