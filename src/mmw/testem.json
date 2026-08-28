@@ -2,5 +2,10 @@
   "launch_in_ci": [
     "Chromium"
   ],
-  "test_page": "test.html"
+  "test_page": "test.html",
+  "browser_args": {
+    "Chromium": {
+      "ci": ["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"]
+    }
+  }
 }

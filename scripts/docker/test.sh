@@ -13,7 +13,8 @@ docker compose exec app python manage.py test --noinput --exclude-tag=mapshed
 
 # Run JS unit tests (unless skipped)
 if [[ -z "${MMW_SKIP_JS_TESTS}" ]]; then
-    docker compose exec app xvfb-run ./node_modules/.bin/testem -f testem.json ci "$@"
+    docker compose exec -w /var/www/mmw/static app \
+        xvfb-run /opt/app/node_modules/.bin/testem -f /opt/app/testem.json ci "$@"
 else
     echo "SKIPPING JS TESTS"
 fi

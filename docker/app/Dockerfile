@@ -55,11 +55,16 @@ ENV DJANGO_SETTINGS_MODULE=mmw.settings.docker \
     RWD_HOST=rwd \
     RWD_PORT=5000
 
-RUN ./bundle.sh --vendor \
+RUN ./bundle.sh --vendor --tests \
     && ./bundle.sh
 
 RUN mkdir -p /var/cache/mmw/static \
     && python manage.py collectstatic --noinput
+
+# Set up the testem browser harness (mirrors the JavaScript test harness
+# task in the Ansible static-files role, which has no equivalent here yet).
+RUN cp testem-harness.html ${DJANGO_STATIC_ROOT}test.html \
+    && cp node_modules/mocha/mocha.css node_modules/mocha/mocha.js ${DJANGO_STATIC_ROOT}
 
 EXPOSE 8000
 
