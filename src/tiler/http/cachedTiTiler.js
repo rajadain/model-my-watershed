@@ -26,7 +26,11 @@ const parseTiTilerLayerParam = (layerParams) => {
 }
 
 // Initialize the lookup mapping from the environment on load
-const titilerLayerMap = parseTiTilerLayerParam(process.env.MMW_TITILER_LAYER_MAP.split(","));
+const titilerLayerMap = parseTiTilerLayerParam(
+  process.env.MMW_TITILER_LAYER_MAP
+    ? process.env.MMW_TITILER_LAYER_MAP.split(",")
+    : []
+);
 
 function getMosaicId(layer, year) {
   try {

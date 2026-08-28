@@ -9,5 +9,5 @@ module.exports = token ? new Rollbar({
         environment: stackType,
     }) : {
     handleError: ex => { console.error(ex); },
-    errorHandler: () => {},
+    errorHandler: () => (req, res, next) => next(),
 };

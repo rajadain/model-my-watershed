@@ -102,8 +102,14 @@ services:
       MMW_DB_PORT: 5432
       MMW_CACHE_HOST: redis
       MMW_CACHE_PORT: 6379
+      MMW_TITILER_HOST: ""
+      MMW_TITILER_LAYER_MAP: ""
     volumes:
       - ./src/tiler:/opt/tiler
+      # Use a named volume for node_modules so the container-compiled native
+      # binaries (e.g. @carto/mapnik against libmapnik3.0) are not shadowed by
+      # the host bind-mount above.
+      - tiler-node-modules:/opt/tiler/node_modules
     depends_on:
       postgres:
         condition: service_healthy
@@ -132,6 +138,7 @@ volumes:
   postgres-data:
   static-files:
   media-files:
+  tiler-node-modules:
 
 networks:
   default:
