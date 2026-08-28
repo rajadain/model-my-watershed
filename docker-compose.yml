@@ -48,6 +48,7 @@ services:
       RWD_PORT: 5000
     volumes:
       - ./src/mmw:/opt/app
+      - app-node-modules:/opt/app/node_modules
       - static-files:/var/www/mmw/static
       - media-files:/var/www/mmw/media
     depends_on:
@@ -83,6 +84,7 @@ services:
       CELERYD_LOG_LEVEL: DEBUG
     volumes:
       - ./src/mmw:/opt/app
+      - app-node-modules:/opt/app/node_modules
       - media-files:/var/www/mmw/media
     depends_on:
       - app
@@ -138,6 +140,7 @@ volumes:
   postgres-data:
   static-files:
   media-files:
+  app-node-modules:
   tiler-node-modules:
 
 networks:
