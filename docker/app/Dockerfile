@@ -40,7 +40,7 @@ COPY src/mmw /opt/app
 
 ENV DJANGO_SETTINGS_MODULE=mmw.settings.docker \
     DJANGO_SECRET_KEY=development-secret-key \
-    DJANGO_STATIC_ROOT=/var/www/mmw/static \
+    DJANGO_STATIC_ROOT=/var/www/mmw/static/ \
     DJANGO_MEDIA_ROOT=/var/www/mmw/media \
     MMW_DB_HOST=postgres \
     MMW_DB_NAME=mmw \
