@@ -1,0 +1,21 @@
+# Exclude node_modules from build context. Without this:
+# 1. The 446MB src/tiler/node_modules is sent to the Docker daemon on every build.
+# 2. COPY src/tiler /opt/tiler overwrites Linux-compiled native .node binaries
+#    with whatever was compiled on the host (e.g. macOS), causing silent failures.
+**/node_modules
+
+# Version control and local VM state
+.git
+.vagrant
+
+# Python virtualenv
+.venv
+
+# Python bytecode
+**/__pycache__
+**/*.pyc
+**/*.pyo
+
+# Scratch and local data
+scratch/
+data/
