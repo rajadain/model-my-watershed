@@ -1,4 +1,8 @@
 services:
+  geop:
+    volumes:
+      - ${HOME}/.aws:/root/.aws:ro
+
   app:
     command: gunicorn --reload --bind 0.0.0.0:8000 --workers 1 mmw.wsgi
     ports:
