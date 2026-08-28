@@ -109,3 +109,41 @@ AWS CloudFormation (Troposphere, `deployment/cfn/`) + Ansible (`deployment/ansib
 - JS: ES5-leaning Backbone/Marionette code (not a modern build with JSX/TS); jshint for linting (`.jshintrc`); Mocha/Chai/Sinon for tests, run via Testem.
 - Long-running model runs (TR-55/GWLF-E/MapShed jobs) go through Celery, not the request/response cycle — check `apps/modeling/tasks.py` and `mapshed/tasks.py` when touching modeling flows.
 - Some datasets loaded by `setupdb.sh` are extremely large (TDX Hydro streams: ~32GB compressed / 110GB uncompressed) — don't load them casually in dev; the boundary/mapshed sets are the common ones needed locally.
+
+## Commit messages
+
+Match the existing history's style. The reader always views the message alongside the diff, so the
+message must carry what the diff cannot.
+
+- **Subject:** imperative mood, capitalized, no trailing period (`Add manifest lambda`, not `Added manifest
+  lambda.`). Keep it short — roughly 3–8 words. When a change is scoped to one component, prefix with
+  `Scope: ` in Title Case (`Ingest:`, `TiTiler:`, `Demo:`, `Tiles:`) before the imperative description.
+- **No body for mechanical changes** — single-purpose edits like `Update README`, `Update CHANGELOG`, or
+  small fixes stand alone as a subject line.
+- **The body is for what the diff can't show.** It should convey the high-level motivation: why the change
+  was made, how it connects to the work that came before it, and how it sets up the work that comes next.
+  Do not enumerate files, functions, or restate the mechanical changes — anything recoverable by reading
+  the diff does not belong in the message. Blank line after the subject, then prose paragraphs hard-wrapped
+  around 65–72 chars, in first person plural ("We add...", "Previously, we were...").
+- Plain, factual, engineering tone — no emoji, no exclamation points. If AI meaningfully assisted, say so
+  plainly (e.g. "Assisted by Opus 4.8").
+
+## Pull requests
+
+A PR description sits above the commits and the diff; its job is to frame the whole change, not re-tell
+it. Aim for these, roughly in priority order:
+
+- **Clarity above all.** The description must be easy to read and unmistakable about its core idea. Favor
+  a plain statement of that idea over exhaustive precision — a sentence the reviewer grasps immediately
+  beats an accurate wall of detail they have to fight through.
+- **Concise.** Length is a cost: every extra sentence is more to read and another place for the point to
+  get lost. Cut anything that isn't earning its place.
+- **Complementary, not repetitive.** The commit messages already give each unit's motivation and the diff
+  already shows the code — restating either is noise. The description is the layer above them: what the
+  whole change is for, and how to verify it.
+- **Get to the heart of it.** Lead with the core problem the PR solves and the main ideas of the approach.
+  Elide implementation details, or at most allude to them; anything recoverable from the commits or the
+  diff doesn't need spelling out here.
+- **Honest about the hard parts.** Point the reviewer at the densest or trickiest piece of logic — the
+  part that was genuinely interesting or hard to get right. It tells them where to spend their attention,
+  and leaves a marker for whoever reads it later.
